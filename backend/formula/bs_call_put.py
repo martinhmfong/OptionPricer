@@ -29,6 +29,13 @@ def is_valid_european_option_price(
     return option_min < option_price <= option_max
 
 
+def european_option_vega(
+        s: float, k: float, t: float, sigma: float, r: float, q: float
+) -> float:
+    d1 = calculate_d1(s, k, t, sigma, r, q)
+    return s * np.exp(-q * t) * np.sqrt(t) * norm.pdf(d1, 0, 1)
+
+
 def european_option_price(
         s: float, k: float, t: float, sigma: float, r: float, q: float, option_type: OptionType
 ) -> float:
@@ -38,13 +45,6 @@ def european_option_price(
         return s * np.exp(-q * t) * norm.cdf(d1) - k * np.exp(-r * t) * norm.cdf(d2)
     if option_type == OptionType.EuropeanPut:
         return k * np.exp(-r * t) * norm.cdf(-d2) - s * np.exp(-q * t) * norm.cdf(-d1)
-
-
-def european_option_vega(
-        s: float, k: float, t: float, sigma: float, r: float, q: float
-) -> float:
-    d1 = calculate_d1(s, k, t, sigma, r, q)
-    return s * np.exp(-q * t) * np.sqrt(t) * norm.pdf(d1, 0, 1)
 
 
 def european_option_implied_volatility(
