@@ -2,8 +2,8 @@ import logging
 
 from flask import Flask, request, jsonify
 
-from common.constants import OptionType
-from formula.bs_call_put import european_option_price, european_option_implied_volatility
+from common.constants import OptionName
+from formula.european_options import european_option_price, european_option_implied_volatility
 
 app = Flask(__name__)
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
@@ -13,7 +13,7 @@ logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 def eu_price():
     params = request.get_json()
     logging.info(f'Received request for eu_price: {params}')
-    params['option_type'] = OptionType(params['option_type'])
+    params['option_name'] = OptionName(params['option_name'])
     price = european_option_price(**params)
     return jsonify(price)
 
@@ -22,7 +22,7 @@ def eu_price():
 def eu_implied_vol():
     params = request.get_json()
     logging.info(f'Received request for eu_price: {params}')
-    params['option_type'] = OptionType(params['option_type'])
+    params['option_name'] = OptionName(params['option_name'])
     price = european_option_implied_volatility(**params)
     return jsonify(price)
 
