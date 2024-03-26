@@ -2,7 +2,7 @@ from common.constants import OptionName
 from common.utils import sqrt, ln, norm_cdf, exp
 
 
-def asian_option_price(
+def geometric_asian_option_price(
         s: float, k: float, t: float, sigma: float, r: float, n: int, option_name: OptionName
 ) -> float:
     sigma_hat = sigma * sqrt((n + 1) * (2 * n + 1) / (6 * n ** 2))
@@ -16,5 +16,5 @@ def asian_option_price(
 
 
 if __name__ == '__main__':
-    price = asian_option_price(100, 100, 3, 0.3, 0.05, 50, OptionName.GeometricAsianCall)
+    price = geometric_asian_option_price(100, 100, 3, 0.3, 0.05, 50, OptionName.GeometricAsianCall)
     print(price)
