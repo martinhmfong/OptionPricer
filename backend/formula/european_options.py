@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 
-from common.constants import OptionName
+from common.constants import OptionType
 from common.utils import ln, sqrt, norm_cdf, exp
 
 
@@ -16,12 +16,12 @@ def calculate_d2(s: float, k: float, t: float, sigma: float, r: float, q: float,
 
 
 def is_valid_european_option_price(
-        option_price: float, s: float, k: float, t: float, r: float, q: float, option_name: OptionName
+        option_price: float, s: float, k: float, t: float, r: float, q: float, option_name: OptionType
 ) -> bool:
-    if option_name == OptionName.Call:
+    if option_name == OptionType.Call:
         option_max = s * exp(-q * t)
         option_min = max(s * exp(-q * t) - k * exp(-r * t), 0)
-    elif option_name == OptionName.Put:
+    elif option_name == OptionType.Put:
         option_min = max(k * exp(-r * t) - s * exp(-q * t), 0)
         option_max = k * exp(-r * t)
     else:
@@ -37,19 +37,19 @@ def european_option_vega(
 
 
 def european_option_price(
-        s: float, k: float, t: float, sigma: float, r: float, q: float, option_name: OptionName
+        s: float, k: float, t: float, sigma: float, r: float, q: float, option_name: OptionType
 ) -> float:
     d1 = calculate_d1(s, k, t, sigma, r, q)
     d2 = calculate_d2(s, k, t, sigma, r, q)
-    if option_name == OptionName.Call:
+    if option_name == OptionType.Call:
         return s * exp(-q * t) * norm_cdf(d1) - k * exp(-r * t) * norm_cdf(d2)
-    if option_name == OptionName.Put:
+    if option_name == OptionType.Put:
         return k * exp(-r * t) * norm_cdf(-d2) - s * exp(-q * t) * norm_cdf(-d1)
 
 
 def european_option_implied_volatility(
         option_price: float, s: float, k: float, t: float, r: float, q: float,
-        option_name: OptionName, max_steps: int = 100, tolerance: float = 1e-8
+        option_name: OptionType, max_steps: int = 100, tolerance: float = 1e-8
 ) -> float:
     if not is_valid_european_option_price(option_price, s, k, t, r, q, option_name):
         return np.nan
