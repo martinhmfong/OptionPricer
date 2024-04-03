@@ -18,10 +18,10 @@ def calculate_d2(s: float, k: float, t: float, sigma: float, r: float, q: float,
 def is_valid_european_option_price(
         option_price: float, s: float, k: float, t: float, r: float, q: float, option_name: OptionName
 ) -> bool:
-    if option_name == OptionName.EuropeanCall:
+    if option_name == OptionName.Call:
         option_max = s * exp(-q * t)
         option_min = max(s * exp(-q * t) - k * exp(-r * t), 0)
-    elif option_name == OptionName.EuropeanPut:
+    elif option_name == OptionName.Put:
         option_min = max(k * exp(-r * t) - s * exp(-q * t), 0)
         option_max = k * exp(-r * t)
     else:
@@ -41,9 +41,9 @@ def european_option_price(
 ) -> float:
     d1 = calculate_d1(s, k, t, sigma, r, q)
     d2 = calculate_d2(s, k, t, sigma, r, q)
-    if option_name == OptionName.EuropeanCall:
+    if option_name == OptionName.Call:
         return s * exp(-q * t) * norm_cdf(d1) - k * exp(-r * t) * norm_cdf(d2)
-    if option_name == OptionName.EuropeanPut:
+    if option_name == OptionName.Put:
         return k * exp(-r * t) * norm_cdf(-d2) - s * exp(-q * t) * norm_cdf(-d1)
 
 

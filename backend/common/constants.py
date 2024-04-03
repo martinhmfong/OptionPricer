@@ -23,20 +23,8 @@ class MeanStrategy(Enum):
 
 
 class OptionName(Enum):
-    EuropeanCall = 'EuropeanCall'
-    EuropeanPut = 'EuropeanPut'
-    AmericanCall = 'AmericanCall'
-    AmericanPut = 'AmericanPut'
-    AsianCall = 'AsianCall'
-    AsianPut = 'AsianPut'
-
-    ArithmeticAsianCall = 'ArithmeticAsianCall'
-    ArithmeticAsianPut = 'ArithmeticAsianPut'
-    GeometricAsianCall = 'GeometricAsianCall'
-    GeometricAsianPut = 'GeometricAsianPut'
-
-    GeometricBasketCall = 'GeometricBasketCall'
-    GeometricBasketPut = 'GeometricBasketPut'
+    Call = 'Call'
+    Put = 'Put'
 
     # unique one
     KIKOPut = 'KIKOPut'

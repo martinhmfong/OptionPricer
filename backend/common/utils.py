@@ -27,6 +27,10 @@ def std(x: number_type) -> number_type:
     return np.std(x)
 
 
+def cov(x: number_type, y: number_type) -> float:
+    return float(np.cov(x, y)[0][1])
+
+
 def norm_cdf(x: float) -> float:
     return norm.cdf(x)
 
@@ -48,5 +52,10 @@ def simulate_prices(s: float, rate: float, sigma: float, t: float, n: int) -> np
 
 
 if __name__ == '__main__':
-    p = simulate_prices(s=50, rate=0.05, sigma=0.3, t=3, n=50)
-    print(p)
+    # p = simulate_prices(s=50, rate=0.05, sigma=0.3, t=3, n=50)
+    # print(p)
+
+    x = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    y = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+    c = cov(x, y)
+    print(c)
