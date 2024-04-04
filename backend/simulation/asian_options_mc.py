@@ -1,37 +1,39 @@
-from common.constants import OptionType, SimulationResult, z_value_95
-from common.utils import sqrt, simulate_prices, mean, std, cov, discounted_payoffs
-from formula.asian_options import geometric_asian_option_price
+from typing import List
+
+import numpy as np
+
+from common.constants import SimulationResult, MeanMethod, OptionType
+from common.utils import exp
+from simulation.abstract_mc import AbstractSimulation
 
 
-def arithmetic_asian_option_price(s: float, k: float, t: float, sigma: float, r: float, n: int, option_name: OptionType, path_number: int,
-                                  is_control_variate: bool) -> SimulationResult:
-    if option_name not in (OptionType.Call, OptionType.Put):
-        raise ValueError(f"{option_name} is not supported by this function")
+class AsianOptionSimulation(AbstractSimulation):
+    def discounted_payoffs(self, ref_rates: List[float]) -> np.ndarray:
+        if self.option_type == OptionType.Call:
+            return np.array([exp(-self.r * self.t) * max(i - self.k, 0) for i in ref_rates])
+        if self.option_type == OptionType.Put:
+            return np.array([exp(-self.r * self.t) * max(self.k - i, 0) for i in ref_rates])
 
-    paths = [simulate_prices(s, r, sigma, t, n) for _ in range(path_number)]
-    arithmetic_means = [i.mean() for i in paths]
-    arithmetic_payoff = discounted_payoffs(arithmetic_means, r, t, k, option_name)
+    def cal_arithmetic_payoffs(self, paths: np.ndarray) -> np.ndarray:
+        ref_rates = [i.mean() for i in paths]
+        return self.discounted_payoffs(ref_rates)
 
-    if is_control_variate:
-        geometric_means = [i.prod() ** (1 / n) for i in paths]
-        geometric_payoff = discounted_payoffs(geometric_means, r, t, k, option_name)
-        covariance = cov(arithmetic_payoff, geometric_payoff)
-        theta = covariance / std(geometric_payoff) ** 2
-        geo_asian_price = geometric_asian_option_price(s, k, t, sigma, r, n, option_name)
-        arr = arithmetic_payoff + theta * (geometric_payoff - geo_asian_price)
-        price = mean(arr)
-        sd = std(arr)
-    else:
-        price = mean(arithmetic_payoff)
-        sd = std(arithmetic_payoff)
+    def cal_geometric_payoffs(self, paths: np.ndarray) -> np.ndarray:
+        ref_rates = [i.prod() ** (1 / self.n) for i in paths]
+        return self.discounted_payoffs(ref_rates)
 
-    return SimulationResult(
-        price=price,
-        confidence_interval=[price - sd / sqrt(path_number) * z_value_95, price + sd / sqrt(path_number) * z_value_95]
+    def simulate(self) -> SimulationResult:
+        paths = self.simulate_paths()
+        geometric_payoffs = self.cal_geometric_payoffs(paths)
+        if self.mean_method == MeanMethod.Geometric:
+            return geometric_payoffs.mean()
+
+
+if __name__ == '__main__':
+    params = dict(
+        s=100, k=100, t=3, sigma=0.3, r=0.05, n=50,
+        option_type=OptionType.Call, m=100_000, is_control_variate=False,
+        mean_method=MeanMethod.Geometric
     )
-
-
-if __name__ == "__main__":
-    param = dict(s=100, k=100, t=3, sigma=0.3, r=0.05, n=50, path_number=100_000)
-    mc_call = arithmetic_asian_option_price(**param, option_name=OptionType.Put, is_control_variate=True)
-    print(mc_call)
+    pricer = AsianOptionSimulation(**params)
+    print(pricer.simulate())

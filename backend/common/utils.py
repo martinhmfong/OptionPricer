@@ -1,9 +1,7 @@
-from typing import Union, List, Iterable
+from typing import Union, List
 
 import numpy as np
 from scipy.stats import norm
-
-from common.constants import OptionType
 
 number_type = Union[int, float, np.ndarray, List[float]]
 
@@ -44,21 +42,6 @@ def norm_ppf(x: float) -> float:
 
 def norm_random(sample_size: int) -> np.ndarray:
     return np.random.normal(loc=0, scale=1, size=sample_size)
-
-
-def simulate_prices(s: float, rate: float, sigma: float, t: float, n: int) -> np.ndarray:
-    delta_t = t / n
-    random_factors = norm_random(n)
-    growth_factors = np.exp((rate - sigma ** 2 / 2) * delta_t + sigma * sqrt(delta_t) * random_factors)
-    cumulative_rate = np.cumprod(growth_factors)
-    return s * cumulative_rate
-
-
-def discounted_payoffs(values: Iterable[float], r: float, t: float, k: float, option_type: OptionType) -> np.ndarray:
-    if option_type == OptionType.Call:
-        return np.array([exp(-r * t) * max(i - k, 0) for i in values])
-    if option_type == OptionType.Put:
-        return np.array([exp(-r * t) * max(k - i, 0) for i in values])
 
 
 if __name__ == '__main__':
