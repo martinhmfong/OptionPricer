@@ -18,5 +18,5 @@ def basket_option_price(
 
 
 if __name__ == '__main__':
-    p = basket_option_price(100, 100, 0.3, 0.3, 0.05, 3, 100, 0.5, OptionType.Put)
+    p = basket_option_price(100, 100, 0.3, 0.3, 0.05, 3, 100, 0.5, OptionType.Call)
     print(p)

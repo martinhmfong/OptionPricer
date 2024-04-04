@@ -3,24 +3,36 @@ from typing import List
 import numpy as np
 
 from common.constants import SimulationResult, MeanMethod, OptionType, z_value_95
-from common.utils import exp, cov, sqrt
+from common.utils import exp, cov, sqrt, norm_random
 from formula.asian_options import geometric_asian_option_price
 from simulation.abstract_mc import AbstractSimulation
 
 
 class AsianOptionSimulation(AbstractSimulation):
-    def discounted_payoffs(self, ref_rates: List[float]) -> np.ndarray:
-        if self.option_type == OptionType.Call:
-            return np.array([exp(-self.r * self.t) * max(i - self.k, 0) for i in ref_rates])
-        if self.option_type == OptionType.Put:
-            return np.array([exp(-self.r * self.t) * max(self.k - i, 0) for i in ref_rates])
+    def __init__(
+            self, s: float, sigma: float, k: float, t: float, r: float, option_type: OptionType, m: int, is_control_variate: bool,
+            n: int, mean_method: MeanMethod.Arithmetic
+    ):
+        super().__init__(s, sigma, k, t, r, option_type, m, is_control_variate)
+        self.n = n
+        self.mean_method = mean_method
+
+    def simulate_path(self) -> np.ndarray:
+        random_factor = norm_random(self.n)
+        delta_t = self.t / self.n
+        growth_factors = exp((self.r - self.sigma ** 2 / 2) * delta_t + self.sigma * sqrt(delta_t) * random_factor)
+        cumulative_rate = np.cumprod(growth_factors)
+        return self.s * cumulative_rate
+
+    def simulate_paths(self) -> List[np.ndarray]:
+        return [self.simulate_path() for _ in range(self.m)]
 
     def cal_arithmetic_payoffs(self, paths: List[np.ndarray]) -> np.ndarray:
-        ref_rates = [i.mean() for i in paths]
+        ref_rates = np.array([i.mean() for i in paths])
         return self.discounted_payoffs(ref_rates)
 
     def cal_geometric_payoffs(self, paths: List[np.ndarray]) -> np.ndarray:
-        ref_rates = [i.prod() ** (1 / self.n) for i in paths]
+        ref_rates = np.array([i.prod() ** (1 / self.n) for i in paths])
         return self.discounted_payoffs(ref_rates)
 
     def simulate(self) -> SimulationResult:
