@@ -2,8 +2,9 @@ from typing import Tuple
 
 import numpy as np
 
-from common.constants import SimulationResult, MeanMethod, OptionType
-from common.utils import norm_random, exp, sqrt
+from common.constants import SimulationResult, MeanMethod, OptionType, z_value_95
+from common.utils import norm_random, exp, sqrt, cov
+from formula.basket_options import basket_option_price
 from simulation.abstract_mc import AbstractSimulation
 
 
@@ -42,13 +43,39 @@ class BasketOptionSimulation(AbstractSimulation):
         geometric_payoffs = self.cal_geometric_payoffs(a1, a2)
         if self.mean_method == MeanMethod.Geometric:
             return SimulationResult(geometric_payoffs.mean())
+        if self.mean_method == MeanMethod.Arithmetic:
+            arithmetic_payoffs = self.cal_arithmetic_payoffs(a1, a2)
+            mean, std = arithmetic_payoffs.mean(), arithmetic_payoffs.std()
+            if self.is_control_variate:
+                covariance = cov(arithmetic_payoffs, geometric_payoffs)
+                theta = covariance / geometric_payoffs.var()
+                geometric_theoretical_price = basket_option_price(
+                    self.s, self.s2, self.sigma, self.sigma2, self.r, self.t, self.k, self.rho, self.option_type
+                )
+                z = arithmetic_payoffs - theta * (geometric_theoretical_price - geometric_payoffs)
+                mean, std = z.mean(), z.std()
+            return SimulationResult(
+                price=mean,
+                confidence_interval=(
+                    mean - z_value_95 * std / sqrt(self.m),
+                    mean + z_value_95 * std / sqrt(self.m)
+                )
+            )
 
 
 if __name__ == '__main__':
     params = dict(
         s=100, s2=100, k=100, t=3, sigma=0.3, sigma2=0.3, r=0.05, rho=0.5,
         option_type=OptionType.Call, m=100_000, is_control_variate=False,
-        mean_method=MeanMethod.Geometric
+        mean_method=MeanMethod.Arithmetic
+    )
+    pricer = BasketOptionSimulation(**params)
+    print(pricer.simulate())
+
+    params = dict(
+        s=100, s2=100, k=100, t=3, sigma=0.3, sigma2=0.3, r=0.05, rho=0.5,
+        option_type=OptionType.Call, m=100_000, is_control_variate=False,
+        mean_method=MeanMethod.Arithmetic
     )
     pricer = BasketOptionSimulation(**params)
     print(pricer.simulate())
