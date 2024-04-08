@@ -17,7 +17,7 @@ class AbstractSimulation(ABC):
         self.t = t
         self.r = r
         self.option_type = option_type
-        self.m = m
+        self.m = int(m)
         self.is_control_variate = is_control_variate
 
     def discounted_payoffs(self, ref_rates: np.ndarray) -> np.ndarray:

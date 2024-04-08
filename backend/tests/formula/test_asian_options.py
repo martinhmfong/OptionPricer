@@ -9,7 +9,7 @@ class TestAsianOptions(TestCase):
         """
         Given by test case
         """
-        params = {'s': 100, 'k': 100, 't': 3, 'sigma': 0.3, 'r': 0.05, 'n': 50, 'option_name': OptionType.Call}
+        params = {'s': 100, 'k': 100, 't': 3, 'sigma': 0.3, 'r': 0.05, 'n': 50, 'option_type': OptionType.Call}
         call_price = geometric_asian_option_price(**params)
         expected_call_price = 13.259
         self.assertAlmostEqual(expected_call_price, call_price, places=3)

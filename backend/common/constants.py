@@ -11,13 +11,16 @@ class OptionType(Enum):
     Call = 'Call'
     Put = 'Put'
 
-    # unique one
-    KIKOPut = 'KIKOPut'
-
 
 class MeanMethod(Enum):
     Arithmetic = 'Arithmetic'
     Geometric = 'Geometric'
+
+
+class PricerName(Enum):
+    European = 'European'
+    ImpliedVolatility = 'ImpliedVolatility'
+    Asian = 'Asian'
 
 
 @dataclass

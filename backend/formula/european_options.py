@@ -37,27 +37,27 @@ def european_option_vega(
 
 
 def european_option_price(
-        s: float, k: float, t: float, sigma: float, r: float, q: float, option_name: OptionType
+        s: float, k: float, t: float, sigma: float, r: float, q: float, option_type: OptionType
 ) -> float:
     d1 = calculate_d1(s, k, t, sigma, r, q)
     d2 = calculate_d2(s, k, t, sigma, r, q)
-    if option_name == OptionType.Call:
+    if option_type == OptionType.Call:
         return s * exp(-q * t) * norm_cdf(d1) - k * exp(-r * t) * norm_cdf(d2)
-    if option_name == OptionType.Put:
+    if option_type == OptionType.Put:
         return k * exp(-r * t) * norm_cdf(-d2) - s * exp(-q * t) * norm_cdf(-d1)
 
 
 def european_option_implied_volatility(
         option_price: float, s: float, k: float, t: float, r: float, q: float,
-        option_name: OptionType, max_steps: int = 100, tolerance: float = 1e-8
+        option_type: OptionType, max_steps: int = 100, tolerance: float = 1e-8
 ) -> float:
-    if not is_valid_european_option_price(option_price, s, k, t, r, q, option_name):
+    if not is_valid_european_option_price(option_price, s, k, t, r, q, option_type):
         return np.nan
     step = 0
     diff = float('inf')
     sigma_guess = sqrt(2 * np.abs((ln(s / k) + (r - q) * t) / t))
     while (step < max_steps) and (diff >= tolerance):
-        guess_price = european_option_price(s, k, t, sigma_guess, r, q, option_name)
+        guess_price = european_option_price(s, k, t, sigma_guess, r, q, option_type)
         guess_vega = european_option_vega(s, k, t, sigma_guess, r, q)
         increment = (guess_price - option_price) / guess_vega
         sigma_guess -= increment

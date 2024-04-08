@@ -14,7 +14,7 @@ class AsianOptionSimulation(AbstractSimulation):
             n: int, mean_method: MeanMethod.Arithmetic
     ):
         super().__init__(s, sigma, k, t, r, option_type, m, is_control_variate)
-        self.n = n
+        self.n = int(n)
         self.mean_method = mean_method
 
     def simulate_path(self) -> np.ndarray:
