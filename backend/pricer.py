@@ -10,12 +10,13 @@ from simulation.basket_options_mc import BasketOptionSimulation
 from simulation.kiko_options_mc import KIKOOptionSimulation
 
 
-def calculate(pricer_name: PricerName, **kwargs):
-    if pricer_name == PricerName.European:
+def calculate(pricer_name: str, **kwargs):
+    pricer = PricerName(pricer_name)
+    if pricer == PricerName.European:
         return european_option_price(**kwargs)
-    if pricer_name == PricerName.ImpliedVolatility:
+    if pricer == PricerName.ImpliedVolatility:
         return european_option_implied_volatility(**kwargs)
-    if pricer_name == PricerName.Asian:
+    if pricer == PricerName.Asian:
         mean_method = MeanMethod(kwargs.pop('mean_method'))
         use_simulation = kwargs.pop('use_simulation', False)
         if not use_simulation:
@@ -23,7 +24,7 @@ def calculate(pricer_name: PricerName, **kwargs):
         else:
             kwargs['mean_method'] = mean_method
             return AsianOptionSimulation(**kwargs).simulate()
-    if pricer_name == PricerName.Basket:
+    if pricer == PricerName.Basket:
         mean_method = MeanMethod(kwargs.pop('mean_method'))
         use_simulation = kwargs.pop('use_simulation', False)
         if not use_simulation:
@@ -31,9 +32,9 @@ def calculate(pricer_name: PricerName, **kwargs):
         else:
             kwargs['mean_method'] = mean_method
             return BasketOptionSimulation(**kwargs).simulate()
-    if pricer_name == PricerName.American:
+    if pricer == PricerName.American:
         return american_option_price(**kwargs)
-    if pricer_name == PricerName.KIKO:
+    if pricer == PricerName.KIKO:
         kwargs['is_control_variate'] = False
         return KIKOOptionSimulation(**kwargs).simulate()
 

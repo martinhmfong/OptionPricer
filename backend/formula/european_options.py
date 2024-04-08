@@ -68,3 +68,9 @@ def european_option_implied_volatility(
     if sigma_guess <= 0:
         return np.nan
     return sigma_guess
+
+
+if __name__ == '__main__':
+    d = {'s': 100, 'k': 100, 't': 3, 'r': 0.05, 'q': 0, 'sigma': 0.3, 'option_type': 'Put'}
+    price = european_option_price(**d)
+    print(price)
