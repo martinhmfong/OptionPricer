@@ -7,6 +7,7 @@ from common.utils import exp, sqrt
 def american_option_price(
         s: float, k: float, t: float, sigma: float, r: float, option_type: OptionType, n: int
 ) -> float:
+    n = int(n)
     delta_t = t / n
     u = exp(sigma * sqrt(delta_t))
     d = 1 / u

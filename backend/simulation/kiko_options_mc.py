@@ -17,7 +17,7 @@ class KIKOOptionSimulation(AbstractSimulation):
             raise ValueError('Call Options are not supported')
         self.barrier_low = barrier_low
         self.barrier_high = barrier_high
-        self.n = n
+        self.n = int(n)
         self.rebate = rebate
         self.delta_t = self.t / self.n
 

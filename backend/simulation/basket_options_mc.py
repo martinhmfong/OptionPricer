@@ -64,18 +64,18 @@ class BasketOptionSimulation(AbstractSimulation):
 
 
 if __name__ == '__main__':
-    params = dict(
+    param1 = dict(
         s=100, s2=100, k=100, t=3, sigma=0.3, sigma2=0.3, r=0.05, rho=0.5,
         option_type=OptionType.Call, m=100_000, is_control_variate=False,
         mean_method=MeanMethod.Arithmetic
     )
-    pricer = BasketOptionSimulation(**params)
+    pricer = BasketOptionSimulation(**param1)
     print(pricer.simulate())
 
-    params = dict(
+    param2 = dict(
         s=100, s2=100, k=100, t=3, sigma=0.3, sigma2=0.3, r=0.05, rho=0.5,
         option_type=OptionType.Call, m=100_000, is_control_variate=False,
         mean_method=MeanMethod.Arithmetic
     )
-    pricer = BasketOptionSimulation(**params)
+    pricer = BasketOptionSimulation(**param2)
     print(pricer.simulate())

@@ -21,6 +21,9 @@ class PricerName(Enum):
     European = 'European'
     ImpliedVolatility = 'ImpliedVolatility'
     Asian = 'Asian'
+    Basket = 'Basket'
+    American = 'American'
+    KIKO = 'KIKO'
 
 
 @dataclass
