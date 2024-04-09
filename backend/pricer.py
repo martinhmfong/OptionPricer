@@ -53,7 +53,7 @@ def calculate(pricer_name: str, **kwargs):
         return KIKOOptionSimulation(**kwargs).simulate()
 
 
-def test_cases():
+def run_test_cases():
     df = pd.read_excel('test_cases.xlsx')
     d = []
 
@@ -67,8 +67,8 @@ def test_cases():
         d.append({**params, **{'result': result, 'pricer_name': pricer_name}})
 
     res = pd.DataFrame(d)[list(df.columns) + ['result']]
-    res.to_excel('test_case_result_done.xlsx', index=False)
+    res.to_excel('test_case_result.xlsx', index=False)
 
 
 if __name__ == '__main__':
-    test_cases()
+    run_test_cases()

@@ -30,6 +30,7 @@ class PricerName(Enum):
 class SimulationResult:
     price: float
     confidence_interval: Tuple[float, float] = None
+    delta: float = None
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -37,3 +38,4 @@ class SimulationResult:
 
 if __name__ == '__main__':
     s = SimulationResult(100, (99, 101))
+    print(s.to_dict())

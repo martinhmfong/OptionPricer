@@ -4,7 +4,7 @@ from common.utils import sqrt, ln, norm_cdf, exp
 
 def basket_option_price(
         s: float, s2: float, sigma: float, sigma2: float, r: float, t: float, k: float, rho: float,
-        option_type: OptionType
+        option_type: OptionType, **kwargs
 ) -> float:
     sigma_b = sqrt(sigma ** 2 + sigma2 ** 2 + 2 * sigma * sigma2 * rho) / 2
     mu_b = r - (sigma ** 2 + sigma2 ** 2) / (2 * 2) + sigma_b ** 2 / 2

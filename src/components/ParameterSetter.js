@@ -12,7 +12,11 @@ const ParameterSetter = (prop) => {
   const show_parameters = display_params[prop.pricer]
   const bool_params = ["use_simulation", "is_control_variate"]
   const text_params = ["option_type", "mean_method"]
-  const numeric_fields = show_parameters.filter(i => !bool_params.includes(i) && i !== "mean_method")
+  let numeric_fields = show_parameters.filter(i => !bool_params.includes(i) && i !== "mean_method")
+  if (!prop.parameters.use_simulation) {
+    numeric_fields = numeric_fields.filter(i => i !== "m")
+  }
+
   const handleParameterChange = (event) => {
     const { name, value } = event.target;
 

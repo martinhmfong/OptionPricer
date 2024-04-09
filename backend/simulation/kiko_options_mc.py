@@ -24,12 +24,18 @@ class KIKOOptionSimulation(AbstractSimulation):
         self.n = int(n)
         self.rebate = rebate
         self.delta_t = self.t / self.n
+        self._samples = None
 
-    def simulate(self) -> SimulationResult:
-        sequencer = random_gen(d=self.n)
-        z = norm.ppf(np.array(sequencer.random(n=self.m)))
-        samples = (self.r - self.sigma ** 2 / 2) * self.delta_t + self.sigma * sqrt(self.delta_t) * z
-        df = pd.DataFrame(samples).cumsum(axis=1).apply(np.exp) * self.s
+    @property
+    def samples(self):
+        if self._samples is None:
+            sequencer = random_gen(d=self.n)
+            z = norm.ppf(np.array(sequencer.random(n=self.m)))
+            self._samples = (self.r - self.sigma ** 2 / 2) * self.delta_t + self.sigma * sqrt(self.delta_t) * z
+        return self._samples
+
+    def simulate_price(self) -> SimulationResult:
+        df = pd.DataFrame(self.samples).cumsum(axis=1).apply(np.exp) * self.s
         df['value'] = df.apply(self.calculate_value, axis=1)
         value = df.value.mean()
         std = df.value.std()
@@ -40,6 +46,13 @@ class KIKOOptionSimulation(AbstractSimulation):
                 value + z_value_95 * std / sqrt(self.m)
             )
         )
+
+    def simulate(self, delta: float = 0.01) -> SimulationResult:
+        df = pd.DataFrame(self.samples).cumsum(axis=1).apply(np.exp) * (self.s + delta)
+        df['value'] = df.apply(self.calculate_value, axis=1)
+        result = self.simulate_price()
+        result.delta = (df['value'].mean() - result.price) / delta
+        return result
 
     def calculate_value(self, row: np.array) -> float:
         price_max, price_min = row.max(), row.min()
