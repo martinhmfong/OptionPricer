@@ -29,8 +29,7 @@ const OptionPricer = () => {
 
   const [parameters, setParameters] = useState(default_parameters)
   const [pricer, setPricer] = useState('European')
-  const [result, setResult] = useState({ })
-  const [error, setError] = useState('')
+  const [result, setResult] = useState({})
 
 
   const calculateOptionPrice = async () => {
@@ -51,7 +50,7 @@ const OptionPricer = () => {
       <h1>FITE7405 Pricer</h1>
       <PricerChoice pricer={pricer} setPricer={setPricer}/>
       <ParameterSetter pricer={pricer} parameters={parameters} setParameters={setParameters}/>
-      <ActionButton parameters={parameters} error={error} calculateOptionPrice={calculateOptionPrice}/>
+      <ActionButton parameters={parameters} calculateOptionPrice={calculateOptionPrice}/>
       <ResultDisplay result={result} setResult={setResult}/>
     </div>
   );
