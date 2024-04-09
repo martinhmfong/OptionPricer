@@ -66,11 +66,12 @@ const ParameterSetter = (prop) => {
           <td>{i}</td>
           <td>
             <input
-              type="text"
+              type="number"
               name={i}
               key={i}
               value={prop.parameters[i]}
               onChange={handleParameterChange}
+              min={0}
             />
           </td>
         </tr>

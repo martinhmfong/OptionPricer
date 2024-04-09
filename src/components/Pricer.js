@@ -30,11 +30,17 @@ const OptionPricer = () => {
   const [result, setResult] = useState(null);
 
 
-  const calculateOptionPrice = () => {
-    // Perform the calculation based on the selected option type and parameters
-    // Replace this with your actual calculation logic
-    const price = Math.random() * 100;
-    setResult(price);
+  const calculateOptionPrice = async() => {
+    await fetch(
+      `/price/${pricer}`,
+      {
+        mode: "no-cors",
+        method: "POST",
+        body: JSON.stringify(parameters),
+      })
+      .then(response => response.json())
+      .then(result => setResult(result.price))
+    // setResult(price);
   };
 
   return (
