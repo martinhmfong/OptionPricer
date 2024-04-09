@@ -30,7 +30,7 @@ const OptionPricer = () => {
 
   const [parameters, setParameters] = useState(default_parameters)
   const [pricer, setPricer] = useState('European')
-  const [result, setResult] = useState({  })
+  const [result, setResult] = useState({ })
   const [error, setError] = useState('')
 
 
