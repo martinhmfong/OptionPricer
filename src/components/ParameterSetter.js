@@ -62,36 +62,41 @@ const ParameterSetter = (prop) => {
   )
 
   return (
-    <table>
-      <tbody>
-      <tr>
-        <th>Parameter</th>
-        <th>Value</th>
-      </tr>
-      {create_choices("option_type", ["Call", "Put"])}
-      {show_parameters.includes("mean_method") ? create_choices("mean_method", ["Arithmetic", "Geometric"]) : null}
-      {numeric_fields.map(i => (
+    <div>
+      <h2>
+        Set Parameters
+      </h2>
+      <table>
+        <tbody>
         <tr>
-          <td>{i}</td>
-          <td>
-            <input
-              type="number"
-              name={i}
-              key={i}
-              value={prop.parameters[i]}
-              onChange={handleParameterChange}
-              min={0}
-            />
-          </td>
+          <th>Name</th>
+          <th>Value</th>
         </tr>
-      ))}
-      {show_parameters.includes("use_simulation") ? create_choices("use_simulation", [true, false]) : null}
-      {
-        prop.parameters["use_simulation"] &&
-        prop.parameters["mean_method"] === "Arithmetic" &&
-        show_parameters.includes("is_control_variate") ? create_choices("is_control_variate", [true, false]) : null}
-      </tbody>
-    </table>
+        {create_choices("option_type", ["Call", "Put"])}
+        {show_parameters.includes("mean_method") ? create_choices("mean_method", ["Arithmetic", "Geometric"]) : null}
+        {numeric_fields.map(i => (
+          <tr>
+            <td>{i}</td>
+            <td>
+              <input
+                type="number"
+                name={i}
+                key={i}
+                value={prop.parameters[i]}
+                onChange={handleParameterChange}
+                min={0}
+              />
+            </td>
+          </tr>
+        ))}
+        {show_parameters.includes("use_simulation") ? create_choices("use_simulation", [true, false]) : null}
+        {
+          prop.parameters["use_simulation"] &&
+          prop.parameters["mean_method"] === "Arithmetic" &&
+          show_parameters.includes("is_control_variate") ? create_choices("is_control_variate", [true, false]) : null}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

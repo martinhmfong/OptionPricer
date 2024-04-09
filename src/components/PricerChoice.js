@@ -5,7 +5,7 @@ const PriceSelector = (prop) => {
   const handlePricerChange = (event) => prop.setPricer(event.target.value)
   return (
     <div>
-      <label>Select a pricer:</label>
+      <h3>Select a pricer:</h3>
       {pricer_names.map((choice) => (
         <div key={choice}>
           <input
@@ -19,6 +19,7 @@ const PriceSelector = (prop) => {
           <label htmlFor={choice}>{choice}</label>
         </div>
       ))}
+      <br />
     </div>
   );
 };
