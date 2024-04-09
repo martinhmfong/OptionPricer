@@ -10,7 +10,21 @@ from simulation.basket_options_mc import BasketOptionSimulation
 from simulation.kiko_options_mc import KIKOOptionSimulation
 
 
+def clear_params(pricer_name: str, **kwargs) -> dict:
+    mapping = {
+        'European': ["r", "t", "s", "sigma", "q", "k", "option_type"],
+        'ImpliedVolatility': ["r", "t", "s", "q", "k", "option_type", "option_price"],
+        'Asian': ["r", "t", "s", "sigma", "k", "option_type", "mean_method", "n", "m", "is_control_variate", "use_simulation"],
+        'Basket': ["r", "t", "s", "sigma", "s2", "sigma2", "k", "option_type", "mean_method", "m", "is_control_variate", "use_simulation"],
+        'American': ["r", "t", "s", "sigma", "k", "option_type", "n"],
+        'KIKO': ["r", "t", "s", "sigma", "k", "option_type", "n", "m", "barrier_low", "barrier_high", "rebate"],
+    }
+    required = mapping[pricer_name]
+    return {k: v for k, v in kwargs.items() if k in required}
+
+
 def calculate(pricer_name: str, **kwargs):
+    kwargs = clear_params(pricer_name, **kwargs)
     pricer = PricerName(pricer_name)
     if pricer == PricerName.European:
         return european_option_price(**kwargs)
@@ -45,15 +59,15 @@ def test_cases():
 
     for _, row in df.iterrows():
         params = {k: v for k, v in row.dropna().items()}
-        pricer_name = PricerName(params.pop('pricer_name'))
+        pricer_name = params.pop('pricer_name')
         params['option_type'] = OptionType(params.pop('option_type'))
         result = calculate(pricer_name, **params)
-        print(f'{pricer_name.name}: {params} | result = {result}')
+        print(f'{pricer_name}: {params} | result = {result}')
 
-        d.append({**params, **{'result': result, 'pricer_name': pricer_name.name}})
+        d.append({**params, **{'result': result, 'pricer_name': pricer_name}})
 
     res = pd.DataFrame(d)[list(df.columns) + ['result']]
-    res.to_excel('test_case_result.xlsx', index=False)
+    res.to_excel('test_case_result_done.xlsx', index=False)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ const OptionPricer = () => {
     rho: null,
     q: null,
     k: null,
-    option_type: null,
+    option_type: "Call",
     mean_method: null,
     option_price: null,
     n: null,

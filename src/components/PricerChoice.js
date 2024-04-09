@@ -10,7 +10,7 @@ const PriceSelector = (prop) => {
         <div key={choice}>
           <input
             type="radio"
-            id={choice}
+            key={choice}
             name={choice}
             value={choice}
             checked={choice === prop.pricer}
