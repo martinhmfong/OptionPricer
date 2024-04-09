@@ -3,7 +3,6 @@ import PricerChoice from "./PricerChoice";
 import ParameterSetter from "./ParameterSetter";
 import ActionButton from "./ActionButton";
 import ResultDisplay from "./ResultDisplay";
-import resultDisplay from "./ResultDisplay";
 
 const OptionPricer = () => {
   const default_parameters = {

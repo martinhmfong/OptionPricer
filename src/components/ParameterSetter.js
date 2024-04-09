@@ -15,14 +15,8 @@ const ParameterSetter = (prop) => {
   const numeric_fields = show_parameters.filter(i => !bool_params.includes(i) && i !== "mean_method")
   const handleParameterChange = (event) => {
     const { name, value } = event.target;
-    if (name === "mean_method") {
-      if (prop.parameters["mean_method"] === "Arithmetic") {
-        prop.setParameters((prevParameters) => ({
-          ...prevParameters,
-          is_control_variate: false,
-        }));
-      }
-    }
+
+
     let new_value;
     if (bool_params.includes(name)) {
       new_value = value === "true"
@@ -37,6 +31,13 @@ const ParameterSetter = (prop) => {
       ...prevParameters,
       [name]: new_value,
     }));
+
+    if (prop.parameters["mean_method"] === "Arithmetic") {
+      prop.setParameters((prevParameters) => ({
+        ...prevParameters,
+        use_simulation: true,
+      }));
+    }
   };
 
 
