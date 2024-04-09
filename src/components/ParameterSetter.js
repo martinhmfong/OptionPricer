@@ -5,53 +5,61 @@ const ParameterSetter = (prop) => {
     European: ["r", "t", "s", "sigma", "q", "k"],
     ImpliedVolatility: ["r", "t", "s", "q", "k", "option_price"],
     Asian: ["r", "t", "s", "sigma", "k", "mean_method", "n", "m", "is_control_variate", "use_simulation"],
-    Basket: ["r", "t", "s", "sigma", "s2", "sigma2", "k", "mean_method", "m", "is_control_variate", "use_simulation"],
+    Basket: ["r", "t", "s", "sigma", "s2", "sigma2", "rho", "k", "mean_method", "m", "is_control_variate", "use_simulation"],
     American: ["r", "t", "s", "sigma", "k", "n"],
     KIKO: ["r", "t", "s", "sigma", "k", "n", "m", "barrier_low", "barrier_high", "rebate"],
   }
+  const show_parameters = display_params[prop.pricer]
+  const bool_params = ["use_simulation", "is_control_variate"]
+  const text_params = ["option_type", "mean_method"]
+  const numeric_fields = show_parameters.filter(i => !bool_params.includes(i) && i !== "mean_method")
   const handleParameterChange = (event) => {
     const { name, value } = event.target;
     if (name === "mean_method") {
       if (prop.parameters["mean_method"] === "Arithmetic") {
         prop.setParameters((prevParameters) => ({
           ...prevParameters,
-          use_simulation: true,
+          is_control_variate: false,
         }));
       }
-      if (prop.parameters["mean_method"] === "Geometric") {
-        prop.setParameters((prevParameters) => ({
-          ...prevParameters,
-          use_simulation: false,
-        }));
+    }
+    let new_value;
+    if (bool_params.includes(name)) {
+      new_value = value === "true"
+    } else {
+      if (text_params.includes(name)) {
+        new_value = value
+      } else {
+        new_value = parseFloat(value)
       }
     }
     prop.setParameters((prevParameters) => ({
       ...prevParameters,
-      [name]: isNaN(parseFloat(value)) ? value : parseFloat(value),
+      [name]: new_value,
     }));
   };
 
-  const show_parameters = display_params[prop.pricer]
 
-  const create_option_type = (
+  const create_choices = (name, values) => (
     <tr>
-      <td>option_type</td>
+      <td>{name}</td>
       <td>
-        {["Call", "Put"].map((choice) => (
-          <div key={choice}>
+        {values.map((choice) => (
+          <div key={String(choice)}>
             <input
               type="radio"
-              key={choice}
-              name="option_type"
+              key={String(choice)}
+              name={String(name)}
               value={choice}
-              checked={choice === prop.parameters["option_type"]}
+              checked={choice === prop.parameters[name]}
               onChange={handleParameterChange}
             />
-            <label htmlFor={choice}>{choice}</label>
+            <label htmlFor={String(choice)}>{String(choice)}</label>
           </div>
         ))}
       </td>
-    </tr>)
+    </tr>
+  )
 
   return (
     <table>
@@ -60,8 +68,9 @@ const ParameterSetter = (prop) => {
         <th>Parameter</th>
         <th>Value</th>
       </tr>
-      {create_option_type}
-      {show_parameters.map(i => (
+      {create_choices("option_type", ["Call", "Put"])}
+      {show_parameters.includes("mean_method") ? create_choices("mean_method", ["Arithmetic", "Geometric"]) : null}
+      {numeric_fields.map(i => (
         <tr>
           <td>{i}</td>
           <td>
@@ -76,6 +85,11 @@ const ParameterSetter = (prop) => {
           </td>
         </tr>
       ))}
+      {show_parameters.includes("use_simulation") ? create_choices("use_simulation", [true, false]) : null}
+      {
+        prop.parameters["use_simulation"] &&
+        prop.parameters["mean_method"] === "Arithmetic" &&
+        show_parameters.includes("is_control_variate") ? create_choices("is_control_variate", [true, false]) : null}
       </tbody>
     </table>
   );

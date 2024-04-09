@@ -1,3 +1,5 @@
+from functools import partial
+
 import numpy as np
 import pandas as pd
 from scipy.stats import qmc, norm
@@ -5,6 +7,8 @@ from scipy.stats import qmc, norm
 from common.constants import OptionType, SimulationResult, z_value_95
 from common.utils import sqrt, exp
 from simulation.abstract_mc import AbstractSimulation
+
+random_gen = partial(qmc.Sobol, seed=1000)
 
 
 class KIKOOptionSimulation(AbstractSimulation):
@@ -22,7 +26,7 @@ class KIKOOptionSimulation(AbstractSimulation):
         self.delta_t = self.t / self.n
 
     def simulate(self) -> SimulationResult:
-        sequencer = qmc.Sobol(d=self.n, seed=1000)
+        sequencer = random_gen(d=self.n)
         z = norm.ppf(np.array(sequencer.random(n=self.m)))
         samples = (self.r - self.sigma ** 2 / 2) * self.delta_t + self.sigma * sqrt(self.delta_t) * z
         df = pd.DataFrame(samples).cumsum(axis=1).apply(np.exp) * self.s

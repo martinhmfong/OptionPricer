@@ -15,7 +15,7 @@ def clear_params(pricer_name: str, **kwargs) -> dict:
         'European': ["r", "t", "s", "sigma", "q", "k", "option_type"],
         'ImpliedVolatility': ["r", "t", "s", "q", "k", "option_type", "option_price"],
         'Asian': ["r", "t", "s", "sigma", "k", "option_type", "mean_method", "n", "m", "is_control_variate", "use_simulation"],
-        'Basket': ["r", "t", "s", "sigma", "s2", "sigma2", "k", "option_type", "mean_method", "m", "is_control_variate", "use_simulation"],
+        'Basket': ["r", "t", "s", "sigma", "s2", "sigma2", "rho", "k", "option_type", "mean_method", "m", "is_control_variate", "use_simulation"],
         'American': ["r", "t", "s", "sigma", "k", "option_type", "n"],
         'KIKO': ["r", "t", "s", "sigma", "k", "option_type", "n", "m", "barrier_low", "barrier_high", "rebate"],
     }

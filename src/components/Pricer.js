@@ -14,12 +14,12 @@ const OptionPricer = () => {
     q: null,
     k: null,
     option_type: "Call",
-    mean_method: null,
+    mean_method: "Arithmetic",
     option_price: null,
     n: null,
     m: null,
-    is_control_variate: null,
-    use_simulation: null,
+    is_control_variate: false,
+    use_simulation: false,
     barrier_low: null,
     barrier_high: null,
     rebate: null,
@@ -30,7 +30,7 @@ const OptionPricer = () => {
   const [result, setResult] = useState(null);
 
 
-  const calculateOptionPrice = async() => {
+  const calculateOptionPrice = async () => {
     await fetch(
       `/price/${pricer}`,
       {
@@ -55,7 +55,7 @@ const OptionPricer = () => {
         <button onClick={calculateOptionPrice}>Calculate</button>
       </div>
       <div className="option-pricer-result">
-        {result !== null ? `Option Price: ${result.toFixed(2)}` : ''}
+        {result !== null ? `Option Price: ${result.toFixed(6)}` : ''}
       </div>
     </div>
   );

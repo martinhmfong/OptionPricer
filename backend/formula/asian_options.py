@@ -3,7 +3,7 @@ from common.utils import sqrt, ln, norm_cdf, exp
 
 
 def geometric_asian_option_price(
-        s: float, k: float, t: float, sigma: float, r: float, n: int, option_type: OptionType
+        s: float, k: float, t: float, sigma: float, r: float, n: int, option_type: OptionType, **kwargs
 ) -> float:
     sigma_hat = sigma * sqrt((n + 1) * (2 * n + 1) / (6 * n ** 2))
     mu_hat = (r - sigma ** 2 / 2) * (n + 1) / (2 * n) + sigma_hat ** 2 / 2
